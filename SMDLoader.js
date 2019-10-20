@@ -336,7 +336,7 @@ THREE.AnimationStates.StateType = {
 }
 
 
-var	gr = [];
+
 
 function vr(t, e) {
 	return t - e
@@ -346,7 +346,9 @@ THREE.AnimationStates.getType = function (t) {
 		THREE.AnimationStates.StateType[t]
 }
 THREE.AnimationStates.interpolation = {
+	
 	LINEAR: function (t, e, n) {
+		var	gr = [];
 		if (void 0 === e)
 			return t;
 		if (t.slerp)
@@ -365,6 +367,7 @@ THREE.AnimationStates.interpolation = {
 		return t
 	},
 	CUBICSPLINE: function (t, e, n, i) {
+		var	gr = [];
 		var s = t.length / 3;
 		if (void 0 === e)
 			return 1 === s ? t[1] : t.slice(s, -s);
