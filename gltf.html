@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>three.js webgl - glTF loader</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body>
+
+	<script src="../three.js"></script>
+	<script src="./OrbitControls.js"></script>
+	<script src="./GLTFLoader.js"></script>
+	<script src="./SMDLoader.js"></script>
+	<script>
+		var container, stats, controls;
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			container = document.createElement('div');
+			document.body.appendChild(container);
+
+			camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5);
+			camera.position.set(0, 0, 3);
+
+			scene = new THREE.Scene();
+
+
+			var ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
+			scene.add(ambientLight);
+
+			var pointLight = new THREE.PointLight(0xffffff, 0.8);
+			camera.add(pointLight);
+			scene.add(camera);
+
+			// model
+
+			var hero = "bristleback"; //windrunner bristleback
+
+			var loader = new THREE.GLTFLoader() //.setPath('models/gltf/bristleback/');
+			loader.load(hero + '.glb', function (gltf) {
+
+				gltf.scene.traverse(function (child) {
+
+
+
+				});
+
+				//gltf.scene.rotation.x = THREE.Math.degToRad(-90);;
+				scene.add(gltf.scene);
+				//	gltf.scene.position.y = -1;
+				gltf.scene.scale.set(0.01, 0.01, 0.01);
+
+				var smd = new THREE.SMDLoader();
+				smd.load({
+					src: hero + "_idle.smd"
+				}).then((e) => {
+					console.log(e);
+					e.rootNode = gltf.scene.children[0];
+					e.play();
+				});
+
+			});
+
+
+			renderer = new THREE.WebGLRenderer({
+				antialias: true
+			});
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.gammaOutput = true;
+			container.appendChild(renderer.domElement);
+
+			controls = new THREE.OrbitControls(camera, renderer.domElement);
+			controls.target.set(0, -0.2, -0.2);
+			controls.update();
+
+			window.addEventListener('resize', onWindowResize, false);
+
+
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+
+		}
+
+		//
+
+		function animate() {
+			var t = +new Date
+			var e = t - this._lastTime
+			this._lastTime = t;
+			requestAnimationFrame(animate);
+
+			if (THREE.Animation && THREE.Animation.tick) {
+				THREE.Animation.tick(e);
+			}
+
+			renderer.render(scene, camera);
+
+
+		}
+	</script>
+
+</body>
+
+</html>
